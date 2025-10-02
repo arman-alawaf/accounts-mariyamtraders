@@ -1,0 +1,25 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Buy extends Model
+{
+    protected $fillable = ['supplier_id', 'payment_id', 'total_amount', 'paid_amount', 'due_amount'];
+
+    public function supplier()
+    {
+        return $this->belongsTo(Supplier::class);
+    }
+
+    public function buyItems()
+    {
+        return $this->hasMany(BuyItem::class);
+    }
+
+    public function payment()
+    {
+        return $this->belongsTo(Payment::class);
+    }
+}
