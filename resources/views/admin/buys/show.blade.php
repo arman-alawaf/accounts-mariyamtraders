@@ -101,7 +101,7 @@
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
         color-adjust: exact;
-        padding-top:200px;
+        padding-top:160px;
         margin:0px auto;
     }
 @media print {
