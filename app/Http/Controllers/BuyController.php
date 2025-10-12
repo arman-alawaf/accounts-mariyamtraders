@@ -18,9 +18,15 @@ class BuyController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $buys = Buy::with('supplier')->get();
+        $query = Buy::with('supplier');
+
+        if ($request->has('date') && !empty($request->date)) {
+            $query->whereDate('date', $request->date);
+        }
+
+        $buys = $query->get();
         return view('admin.buys.index', compact('buys'));
     }
 
@@ -43,6 +49,7 @@ class BuyController extends Controller
     {
         $request->validate([
             'supplier_id' => 'required|exists:suppliers,id',
+            'date' => 'required|date',
             'buy_items' => 'required|array|min:1',
             'buy_items.*.product_id' => 'required|exists:products,id',
             'buy_items.*.unit_id' => 'required|exists:units,id',
@@ -57,7 +64,7 @@ class BuyController extends Controller
         DB::transaction(function () use ($request) {
             $payment = Payment::create();
 
-            $buy = Buy::create(['supplier_id' => $request->supplier_id, 'payment_id' => $payment->id]);
+            $buy = Buy::create(['supplier_id' => $request->supplier_id, 'payment_id' => $payment->id, 'date' => $request->date]);
 
             foreach ($request->buy_items as $item) {
                 BuyItem::create([

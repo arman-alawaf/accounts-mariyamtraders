@@ -26,6 +26,12 @@
                             @error('supplier_id') <div class="text-danger">{{ $message }}</div> @enderror
                         </div>
 
+                        <div class="mb-3">
+                            <label for="date" class="form-label">Date</label>
+                            <input type="date" class="form-control" id="date" name="date" value="{{ date('Y-m-d') }}" required>
+                            @error('date') <div class="text-danger">{{ $message }}</div> @enderror
+                        </div>
+
                         <h5>Buy Items</h5>
                         <div id="buyItems">
                             <div class="buy-item mb-3 border p-3">

@@ -29,7 +29,7 @@
                                 <tr>
                                     <td>{{ $buy->id }}</td>
                                     <td>{{ $buy->supplier->name }}</td>
-                                    <td>{{ $buy->created_at->format('Y-m-d') }}</td>
+                                    <td>{{ $buy->date ? \Carbon\Carbon::parse($buy->date)->format('Y-m-d') : $buy->created_at->format('Y-m-d') }}</td>
                                     <td>
                                         <a href="{{ route('buys.show', $buy) }}" class="btn btn-info btn-sm">View</a>
                                         <form action="{{ route('buys.destroy', $buy) }}" method="POST" style="display:inline;">
