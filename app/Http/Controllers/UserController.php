@@ -4,16 +4,35 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Yajra\DataTables\DataTables;
 
 class UserController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::all();
-        return view('admin.users.index', compact('users'));
+        if ($request->ajax()) {
+            $users = User::select(['id', 'name', 'email', 'role', 'created_at']);
+
+            return DataTables::of($users)
+                ->addIndexColumn()
+                ->editColumn('created_at', function ($user) {
+                    return $user->created_at->setTimezone('Asia/Dhaka')->format('g:i A, j F Y');
+                })
+                ->addColumn('action', function ($user) {
+                    return '<a href="' . route('admin.users.edit', $user->id) . '" class="btn btn-warning btn-sm">Edit</a>
+                            <form action="' . route('admin.users.destroy', $user->id) . '" method="POST" style="display:inline;">
+                                ' . csrf_field() . '
+                                ' . method_field('DELETE') . '
+                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm(\'Are you sure?\')">Delete</button>
+                            </form>';
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+        }
+        return view('admin.users.index');
     }
 
     /**

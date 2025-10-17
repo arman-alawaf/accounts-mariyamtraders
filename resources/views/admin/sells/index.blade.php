@@ -15,32 +15,16 @@
                         <div class="alert alert-success">{{ session('success') }}</div>
                     @endif
 
-                    <table class="table table-striped">
+                    <table id="sells-table" class="table table-striped">
                         <thead>
                             <tr>
+                                <th>#</th>
                                 <th>ID</th>
                                 <th>Customer</th>
-                                <th>Date</th>
+                                <th>Created At</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            @foreach($sells as $sell)
-                                <tr>
-                                    <td>{{ $sell->id }}</td>
-                                    <td>{{ $sell->customer->name }}</td>
-                                    <td>{{ $sell->created_at->format('Y-m-d') }}</td>
-                                    <td>
-                                        <a href="{{ route('sells.show', $sell) }}" class="btn btn-info btn-sm">View</a>
-                                        <form action="{{ route('sells.destroy', $sell) }}" method="POST" style="display:inline;">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">Delete</button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
                     </table>
                 </div>
             </div>
@@ -48,3 +32,23 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+$(document).ready(function() {
+    $('#sells-table').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: '{{ route("sells.index") }}',
+        pageLength: 5,
+        columns: [
+            { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
+            { data: 'id', name: 'id' },
+            { data: 'customer_name', name: 'customer_name' },
+            { data: 'created_at', name: 'created_at' },
+            { data: 'action', name: 'action', orderable: false, searchable: false }
+        ]
+    });
+});
+</script>
+@endpush

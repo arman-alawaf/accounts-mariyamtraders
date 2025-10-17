@@ -4,16 +4,34 @@ namespace App\Http\Controllers;
 
 use App\Models\Customer;
 use Illuminate\Http\Request;
+use Yajra\DataTables\DataTables;
 
 class CustomerController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $customers = Customer::all();
-        return view('admin.customers.index', compact('customers'));
+        if ($request->ajax()) {
+            $customers = Customer::select(['id', 'name', 'company_name', 'phone', 'email', 'address', 'created_at']);
+            return DataTables::of($customers)
+                ->addIndexColumn()
+                ->editColumn('created_at', function ($customer) {
+                    return $customer->created_at->setTimezone('Asia/Dhaka')->format('g:i A, j F Y');
+                })
+                ->addColumn('action', function ($customer) {
+                    return '<a href="' . route('customers.edit', $customer->id) . '" class="btn btn-warning btn-sm">Edit</a>
+                            <form action="' . route('customers.destroy', $customer->id) . '" method="POST" style="display:inline;">
+                                ' . csrf_field() . '
+                                ' . method_field('DELETE') . '
+                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm(\'Are you sure?\')">Delete</button>
+                            </form>';
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+        }
+        return view('admin.customers.index');
     }
 
     /**
@@ -31,12 +49,13 @@ class CustomerController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
+            'company_name' => 'nullable|string|max:255',
             'phone' => 'required|string|max:255',
             'email' => 'required|email|unique:customers',
             'address' => 'required|string',
         ]);
 
-        Customer::create($request->only(['name', 'phone', 'email', 'address']));
+        Customer::create($request->only(['name', 'company_name', 'phone', 'email', 'address']));
 
         return redirect()->route('customers.index')->with('success', 'Customer created successfully.');
     }
@@ -68,12 +87,13 @@ class CustomerController extends Controller
 
         $request->validate([
             'name' => 'required|string|max:255',
+            'company_name' => 'nullable|string|max:255',
             'phone' => 'required|string|max:255',
             'email' => 'required|email|unique:customers,email,' . $id,
             'address' => 'required|string',
         ]);
 
-        $customer->update($request->only(['name', 'phone', 'email', 'address']));
+        $customer->update($request->only(['name', 'company_name', 'phone', 'email', 'address']));
 
         return redirect()->route('customers.index')->with('success', 'Customer updated successfully.');
     }

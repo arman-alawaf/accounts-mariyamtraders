@@ -4,16 +4,35 @@ namespace App\Http\Controllers;
 
 use App\Models\PayType;
 use Illuminate\Http\Request;
+use Yajra\DataTables\DataTables;
 
 class PayTypeController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $payTypes = PayType::all();
-        return view('admin.pay_types.index', compact('payTypes'));
+        if ($request->ajax()) {
+            $payTypes = PayType::select(['id', 'name', 'created_at']);
+
+            return DataTables::of($payTypes)
+                ->addIndexColumn()
+                ->editColumn('created_at', function ($payType) {
+                    return $payType->created_at->setTimezone('Asia/Dhaka')->format('g:i A, j F Y');
+                })
+                ->addColumn('action', function ($payType) {
+                    return '<a href="' . route('pay_types.edit', $payType->id) . '" class="btn btn-warning btn-sm">Edit</a>
+                            <form action="' . route('pay_types.destroy', $payType->id) . '" method="POST" style="display:inline;">
+                                ' . csrf_field() . '
+                                ' . method_field('DELETE') . '
+                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm(\'Are you sure?\')">Delete</button>
+                            </form>';
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+        }
+        return view('admin.pay_types.index');
     }
 
     /**

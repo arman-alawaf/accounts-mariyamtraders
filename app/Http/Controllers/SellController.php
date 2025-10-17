@@ -12,16 +12,38 @@ use App\Models\Unit;
 use App\Models\PayType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Yajra\DataTables\DataTables;
 
 class SellController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $sells = Sell::with('customer')->get();
-        return view('admin.sells.index', compact('sells'));
+        if ($request->ajax()) {
+            $sells = Sell::with('customer')->select(['id', 'customer_id', 'created_at']);
+
+            return DataTables::of($sells)
+                ->addIndexColumn()
+                ->addColumn('customer_name', function ($sell) {
+                    return $sell->customer ? $sell->customer->name : 'N/A';
+                })
+                ->editColumn('created_at', function ($sell) {
+                    return $sell->created_at->setTimezone('Asia/Dhaka')->format('g:i A, j F Y');
+                })
+                ->addColumn('action', function ($sell) {
+                    return '<a href="' . route('sells.show', $sell->id) . '" class="btn btn-info btn-sm">View</a>
+                            <form action="' . route('sells.destroy', $sell->id) . '" method="POST" style="display:inline;">
+                                ' . csrf_field() . '
+                                ' . method_field('DELETE') . '
+                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm(\'Are you sure?\')">Delete</button>
+                            </form>';
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+        }
+        return view('admin.sells.index');
     }
 
     /**

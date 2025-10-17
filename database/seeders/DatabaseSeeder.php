@@ -51,10 +51,12 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // Suppliers
+        Supplier::factory(100)->create();
         Supplier::create(['name' => 'Supplier A', 'email' => 'supplierA@example.com', 'phone' => '1234567890', 'address' => 'Address A']);
         Supplier::create(['name' => 'Supplier B', 'email' => 'supplierB@example.com', 'phone' => '0987654321', 'address' => 'Address B']);
 
         // Customers
+        Customer::factory(100)->create();
         Customer::create(['name' => 'Customer A', 'email' => 'customerA@example.com', 'phone' => '1111111111', 'address' => 'Address C']);
         Customer::create(['name' => 'Customer B', 'email' => 'customerB@example.com', 'phone' => '2222222222', 'address' => 'Address D']);
 
@@ -69,6 +71,7 @@ class DatabaseSeeder extends Seeder
         Unit::create(['name' => 'Liter']);
 
         // Products
+        Product::factory(100)->create();
         $product1 = Product::create(['name' => 'Product 1']);
         $product2 = Product::create(['name' => 'Product 2']);
         $product3 = Product::create(['name' => 'Product 3']);

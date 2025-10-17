@@ -15,31 +15,16 @@
                         <div class="alert alert-success">{{ session('success') }}</div>
                     @endif
 
-                    <table class="table table-striped">
+                    <table id="units-table" class="table table-striped">
                         <thead>
                             <tr>
+                                <th>#</th>
                                 <th>ID</th>
                                 <th>Name</th>
+                                <th>Created At</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            @foreach($units as $unit)
-                                <tr>
-                                    <td>{{ $unit->id }}</td>
-                                    <td>{{ $unit->name }}</td>
-                                    <td>
-                                        <a href="{{ route('units.show', $unit) }}" class="btn btn-info btn-sm">View</a>
-                                        <a href="{{ route('units.edit', $unit) }}" class="btn btn-warning btn-sm">Edit</a>
-                                        <form action="{{ route('units.destroy', $unit) }}" method="POST" style="display:inline;">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">Delete</button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
                     </table>
                 </div>
             </div>
@@ -47,3 +32,23 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+$(document).ready(function() {
+    $('#units-table').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: '{{ route("units.index") }}',
+        pageLength: 5,
+        columns: [
+            { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
+            { data: 'id', name: 'id' },
+            { data: 'name', name: 'name' },
+            { data: 'created_at', name: 'created_at' },
+            { data: 'action', name: 'action', orderable: false, searchable: false }
+        ]
+    });
+});
+</script>
+@endpush

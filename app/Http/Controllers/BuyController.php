@@ -12,6 +12,7 @@ use App\Models\Unit;
 use App\Models\PayType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Yajra\DataTables\DataTables;
 
 class BuyController extends Controller
 {
@@ -20,14 +21,36 @@ class BuyController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Buy::with('supplier');
+        if ($request->ajax()) {
+            $query = Buy::with('supplier')->select(['id', 'supplier_id', 'date', 'created_at']);
 
-        if ($request->has('date') && !empty($request->date)) {
-            $query->whereDate('date', $request->date);
+            if ($request->has('date') && !empty($request->date)) {
+                $query->whereDate('date', $request->date);
+            }
+
+            return DataTables::of($query)
+                ->addIndexColumn()
+                ->addColumn('supplier_name', function ($buy) {
+                    return $buy->supplier ? $buy->supplier->name : 'N/A';
+                })
+                ->editColumn('date', function ($buy) {
+                    return $buy->date ? $buy->date->format('Y-m-d') : 'N/A';
+                })
+                ->editColumn('created_at', function ($buy) {
+                    return $buy->created_at->setTimezone('Asia/Dhaka')->format('g:i A, j F Y');
+                })
+                ->addColumn('action', function ($buy) {
+                    return '<a href="' . route('buys.show', $buy->id) . '" class="btn btn-info btn-sm">View</a>
+                            <form action="' . route('buys.destroy', $buy->id) . '" method="POST" style="display:inline;">
+                                ' . csrf_field() . '
+                                ' . method_field('DELETE') . '
+                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm(\'Are you sure?\')">Delete</button>
+                            </form>';
+                })
+                ->rawColumns(['action'])
+                ->make(true);
         }
-
-        $buys = $query->get();
-        return view('admin.buys.index', compact('buys'));
+        return view('admin.buys.index');
     }
 
     /**
