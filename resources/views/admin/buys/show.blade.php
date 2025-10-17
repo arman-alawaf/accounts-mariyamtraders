@@ -23,7 +23,7 @@
                                 <th>Product</th>
                                 <th>Unit</th>
                                 <th>Quantity</th>
-                                <th>UnitPrice</th>
+                                <th>Unit Price</th>
                                 <th>Total</th>
                                 <th>Note</th>
                             </tr>
@@ -34,18 +34,18 @@
                                     <td>{{ $item->product->name }}</td>
                                     <td>{{ $item->unit->name }}</td>
                                     <td>{{ $item->quantity }}</td>
-                                    <td>{{ $item->amount }}</td>
-                                    <td>{{ $item->amount * $item->quantity }}</td>
+                                    <td>{{ $item->unit_price }}</td>
+                                    <td>{{ $item->unit_price * $item->quantity }}</td>
                                     <td>{{ $item->note }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
                         <tfoot>
                             <tr>
-                                <th colspan="2">Subtotal</th>
-                                <th>{{ $buy->buyItems->sum('amount') }}</th>
+                                <th colspan="3">Subtotal</th>
                                 <th>{{ $buy->buyItems->sum('quantity') }}</th>
-                                <th>{{ $buy->buyItems->sum(function($item) { return $item->amount * $item->quantity; }) }}</th>
+                                <th></th>
+                                <th>{{ $buy->buyItems->sum(function($item) { return $item->unit_price * $item->quantity; }) }}</th>
                                 <th></th>
                             </tr>
                         </tfoot>
@@ -77,9 +77,9 @@
 
                     <div class="row justify-content-center">
                     <div class="col-md-4 mt-3 card p-2">
-                        <p><strong>Total:</strong> {{ $buy->buyItems->sum(function($item) { return $item->amount * $item->quantity; }) }}</p>
+                        <p><strong>Total:</strong> {{ $buy->buyItems->sum(function($item) { return $item->unit_price * $item->quantity; }) }}</p>
                         <p><strong>Total Paid:</strong> {{ $buy->payment->paymentItems->sum('amount') }}</p>
-                        <p><strong>Total Due:</strong> {{ $buy->buyItems->sum(function($item) { return $item->amount * $item->quantity; }) - $buy->payment->paymentItems->sum('amount') }}</p>
+                        <p><strong>Total Due:</strong> {{ $buy->buyItems->sum(function($item) { return $item->unit_price * $item->quantity; }) - $buy->payment->paymentItems->sum('amount') }}</p>
                     </div>
                     </div>
                 </div>

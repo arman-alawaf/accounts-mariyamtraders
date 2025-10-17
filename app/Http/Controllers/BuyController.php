@@ -77,7 +77,7 @@ class BuyController extends Controller
             'buy_items' => 'required|array|min:1',
             'buy_items.*.product_id' => 'required|exists:products,id',
             'buy_items.*.unit_id' => 'required|exists:units,id',
-            'buy_items.*.amount' => 'required|numeric|min:0',
+            'buy_items.*.unit_price' => 'required|numeric|min:0',
             'buy_items.*.quantity' => 'required|integer|min:1',
             'buy_items.*.note' => 'nullable|string',
             'payment_items' => 'required|array|min:1',
@@ -100,7 +100,8 @@ class BuyController extends Controller
                     'buy_id' => $buy->id,
                     'product_id' => $item['product_id'],
                     'unit_id' => $item['unit_id'],
-                    'amount' => $item['amount'],
+                    'amount' => $item['unit_price'] * $item['quantity'],
+                    'unit_price' => $item['unit_price'],
                     'quantity' => $item['quantity'],
                     'note' => $item['note'] ?? null,
                 ]);

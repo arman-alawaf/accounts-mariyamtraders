@@ -69,7 +69,7 @@ class SellController extends Controller
             'sell_items' => 'required|array|min:1',
             'sell_items.*.product_id' => 'required|exists:products,id',
             'sell_items.*.unit_id' => 'required|exists:units,id',
-            'sell_items.*.amount' => 'required|numeric|min:0',
+            'sell_items.*.unit_price' => 'required|numeric|min:0',
             'sell_items.*.quantity' => 'required|integer|min:1',
             'sell_items.*.note' => 'nullable|string',
             'payment_items' => 'required|array|min:1',
@@ -91,7 +91,8 @@ class SellController extends Controller
                     'sell_id' => $sell->id,
                     'product_id' => $item['product_id'],
                     'unit_id' => $item['unit_id'],
-                    'amount' => $item['amount'],
+                    'amount' => $item['unit_price'] * $item['quantity'],
+                    'unit_price' => $item['unit_price'],
                     'quantity' => $item['quantity'],
                     'note' => $item['note'] ?? null,
                 ]);

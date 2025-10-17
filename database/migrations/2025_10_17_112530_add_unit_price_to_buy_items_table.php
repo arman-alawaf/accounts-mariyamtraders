@@ -11,7 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Column already exists in suppliers table
+        Schema::table('buy_items', function (Blueprint $table) {
+            $table->decimal('unit_price', 10, 2)->after('quantity');
+        });
     }
 
     /**
@@ -19,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('suppliers', function (Blueprint $table) {
-            $table->dropColumn('company_name');
+        Schema::table('buy_items', function (Blueprint $table) {
+            $table->dropColumn('unit_price');
         });
     }
 };

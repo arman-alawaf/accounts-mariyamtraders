@@ -53,12 +53,12 @@
                                         </select>
                                     </div>
                                     <div class="col-md-2">
-                                        <label>Unit Price</label>
-                                        <input type="number" step="0.01" class="form-control unit-price" name="sell_items[0][unit_price]" required>
-                                    </div>
-                                    <div class="col-md-2">
                                         <label>Quantity</label>
                                         <input type="number" class="form-control quantity" name="sell_items[0][quantity]" required>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label>Unit Price</label>
+                                        <input type="number" step="0.01" class="form-control unit-price" name="sell_items[0][unit_price]" required>
                                     </div>
                                     <div class="col-md-2">
                                         <label>Amount</label>

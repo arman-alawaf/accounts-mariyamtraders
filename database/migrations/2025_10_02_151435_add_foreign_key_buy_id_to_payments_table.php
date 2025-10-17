@@ -11,9 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('payments', function (Blueprint $table) {
-            $table->foreign('buy_id')->references('id')->on('buys')->onDelete('cascade');
-        });
+        // Foreign key already added in previous migration
     }
 
     /**
@@ -22,7 +20,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('payments', function (Blueprint $table) {
-            //
+            $table->dropForeign(['buy_id']);
         });
     }
 };
