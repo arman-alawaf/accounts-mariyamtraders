@@ -5,7 +5,7 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
-<div class="container">
+<div class="container-fluid">
     <div class="row justify-content-center">
         <div class="col-md-12">
             <div class="card">
@@ -24,6 +24,14 @@
                                 @endforeach
                             </select>
                             @error('supplier_id') <div class="text-danger">{{ $message }}</div> @enderror
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="supplier_type_id" class="form-label">Supplier Type</label>
+                            <select class="form-control select2" id="supplier_type_id" name="supplier_type_id">
+                                <option value="">Select Supplier Type</option>
+                            </select>
+                            @error('supplier_type_id') <div class="text-danger">{{ $message }}</div> @enderror
                         </div>
 
                         <div class="mb-3">
@@ -55,12 +63,16 @@
                                         </select>
                                     </div>
                                     <div class="col-md-2">
-                                        <label>Amount</label>
-                                        <input type="number" step="0.01" class="form-control" name="buy_items[0][amount]" required>
+                                        <label>Unit Price</label>
+                                        <input type="number" step="0.01" class="form-control unit-price" name="buy_items[0][unit_price]" required>
                                     </div>
                                     <div class="col-md-2">
                                         <label>Quantity</label>
-                                        <input type="number" class="form-control" name="buy_items[0][quantity]" required>
+                                        <input type="number" class="form-control quantity" name="buy_items[0][quantity]" required>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label>Amount</label>
+                                        <input type="number" step="0.01" class="form-control amount" name="buy_items[0][amount]" readonly required>
                                     </div>
                                     <div class="col-md-3">
                                         <label>Note</label>
@@ -73,6 +85,10 @@
                             </div>
                         </div>
                         <button type="button" id="addBuyItem" class="btn btn-secondary">Add Buy Item</button>
+
+                        <div class="mt-3">
+                            <h6>Subtotal: <span id="subtotal">0.00</span></h6>
+                        </div>
 
                         <h5 class="mt-4">Payment Items</h5>
                         <div id="paymentItems">
@@ -88,7 +104,7 @@
                                         </select>
                                     </div>
                                     <div class="col-md-5">
-                                        <label>Amount</label>
+                                        <label>Paid Amount</label>
                                         <input type="number" step="0.01" class="form-control" name="payment_items[0][amount]" required>
                                     </div>
                                     <div class="col-md-2">
@@ -98,6 +114,11 @@
                             </div>
                         </div>
                         <button type="button" id="addPaymentItem" class="btn btn-secondary">Add Payment Item</button>
+
+                        <div class="mt-3">
+                            <h6>Total Paid: <span id="totalPaid">0.00</span></h6>
+                            <h6>Due Amount: <span id="dueAmount">0.00</span></h6>
+                        </div>
 
                         <div class="mt-4">
                             <button type="submit" class="btn btn-primary">Create Buy</button>
@@ -133,6 +154,71 @@ $(document).ready(function() {
             return null;
         }
     });
+
+    // Load supplier types when supplier is selected
+    $('#supplier_id').on('change', function() {
+        var supplierId = $(this).val();
+        var supplierTypeSelect = $('#supplier_type_id');
+
+        if (supplierId) {
+            $.ajax({
+                url: '/supplier-types-by-supplier/' + supplierId,
+                type: 'GET',
+                success: function(data) {
+                    supplierTypeSelect.empty();
+                    supplierTypeSelect.append('<option value="">Select Supplier Type</option>');
+                    $.each(data, function(key, value) {
+                        supplierTypeSelect.append('<option value="' + value.id + '">' + value.number + '</option>');
+                    });
+                }
+            });
+        } else {
+            supplierTypeSelect.empty();
+            supplierTypeSelect.append('<option value="">Select Supplier Type</option>');
+        }
+    });
+
+    // Auto calculate buy item amounts and totals
+    $(document).on('input', '.unit-price, .quantity', function() {
+        var row = $(this).closest('.buy-item');
+        var unitPrice = parseFloat(row.find('.unit-price').val()) || 0;
+        var quantity = parseFloat(row.find('.quantity').val()) || 0;
+        var amount = unitPrice * quantity;
+        row.find('.amount').val(amount.toFixed(2));
+
+        calculateSubtotal();
+    });
+
+    // Calculate subtotal
+    function calculateSubtotal() {
+        var subtotal = 0;
+        $('.buy-item .amount').each(function() {
+            subtotal += parseFloat($(this).val()) || 0;
+        });
+        $('#subtotal').text(subtotal.toFixed(2));
+        calculateDueAmount();
+    }
+
+    // Calculate total paid and due amount
+    $(document).on('input', '.payment-item input[name*="[amount]"]', function() {
+        calculateTotalPaid();
+    });
+
+    function calculateTotalPaid() {
+        var totalPaid = 0;
+        $('.payment-item input[name*="[amount]"]').each(function() {
+            totalPaid += parseFloat($(this).val()) || 0;
+        });
+        $('#totalPaid').text(totalPaid.toFixed(2));
+        calculateDueAmount();
+    }
+
+    function calculateDueAmount() {
+        var subtotal = parseFloat($('#subtotal').text()) || 0;
+        var totalPaid = parseFloat($('#totalPaid').text()) || 0;
+        var dueAmount = subtotal - totalPaid;
+        $('#dueAmount').text(dueAmount.toFixed(2));
+    }
 });
 
 document.getElementById('addBuyItem').addEventListener('click', function() {

@@ -38,6 +38,16 @@ Route::middleware(['auth', 'admin'])->group(function () {
         'update' => 'customers.update',
         'destroy' => 'customers.destroy',
     ]);
+    Route::resource('customer_types', App\Http\Controllers\CustomerTypeController::class)->names([
+        'index' => 'customer_types.index',
+        'create' => 'customer_types.create',
+        'store' => 'customer_types.store',
+        'show' => 'customer_types.show',
+        'edit' => 'customer_types.edit',
+        'update' => 'customer_types.update',
+        'destroy' => 'customer_types.destroy',
+    ]);
+    Route::get('customer-types-by-customer/{customerId}', [App\Http\Controllers\CustomerTypeController::class, 'getByCustomer'])->name('customer_types.by_customer');
     Route::resource('suppliers', App\Http\Controllers\SupplierController::class)->names([
         'index' => 'suppliers.index',
         'create' => 'suppliers.create',
@@ -47,6 +57,16 @@ Route::middleware(['auth', 'admin'])->group(function () {
         'update' => 'suppliers.update',
         'destroy' => 'suppliers.destroy',
     ]);
+    Route::resource('supplier_types', App\Http\Controllers\SupplierTypeController::class)->names([
+        'index' => 'supplier_types.index',
+        'create' => 'supplier_types.create',
+        'store' => 'supplier_types.store',
+        'show' => 'supplier_types.show',
+        'edit' => 'supplier_types.edit',
+        'update' => 'supplier_types.update',
+        'destroy' => 'supplier_types.destroy',
+    ]);
+    Route::get('supplier-types-by-supplier/{supplierId}', [App\Http\Controllers\SupplierTypeController::class, 'getBySupplier'])->name('supplier_types.by_supplier');
     Route::resource('pay_types', App\Http\Controllers\PayTypeController::class)->names([
         'index' => 'pay_types.index',
         'create' => 'pay_types.create',

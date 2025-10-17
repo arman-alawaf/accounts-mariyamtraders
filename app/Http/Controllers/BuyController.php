@@ -72,6 +72,7 @@ class BuyController extends Controller
     {
         $request->validate([
             'supplier_id' => 'required|exists:suppliers,id',
+            'supplier_type_id' => 'nullable|exists:supplier_types,id',
             'date' => 'required|date',
             'buy_items' => 'required|array|min:1',
             'buy_items.*.product_id' => 'required|exists:products,id',
@@ -87,7 +88,12 @@ class BuyController extends Controller
         DB::transaction(function () use ($request) {
             $payment = Payment::create();
 
-            $buy = Buy::create(['supplier_id' => $request->supplier_id, 'payment_id' => $payment->id, 'date' => $request->date]);
+            $buy = Buy::create([
+                'supplier_id' => $request->supplier_id,
+                'supplier_type_id' => $request->supplier_type_id,
+                'payment_id' => $payment->id,
+                'date' => $request->date
+            ]);
 
             foreach ($request->buy_items as $item) {
                 BuyItem::create([

@@ -8,6 +8,7 @@
                 <div class="card-header">
                     <h4>Customers Management</h4>
                     <a href="{{ route('customers.create') }}" class="btn btn-primary">Add New Customer</a>
+                    <a href="{{ route('customer_types.index') }}" class="btn btn-secondary">Manage Customer Types</a>
                 </div>
 
                 <div class="card-body">
