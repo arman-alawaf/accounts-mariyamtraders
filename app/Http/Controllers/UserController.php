@@ -14,7 +14,7 @@ class UserController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $users = User::select(['id', 'name', 'email', 'role', 'created_at']);
+            $users = User::select(['id', 'name', 'email', 'role', 'created_at'])->orderBy('id', 'desc');
 
             return DataTables::of($users)
                 ->addIndexColumn()

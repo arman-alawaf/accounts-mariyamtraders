@@ -75,9 +75,12 @@
                         </tfoot>
                     </table>
 
-                    <div class="mt-3">
+                    <div class="row justify-content-center">
+                    <div class="col-md-4 mt-3 card p-2">
+                        <p><strong>Total:</strong> {{ $buy->buyItems->sum(function($item) { return $item->amount * $item->quantity; }) }}</p>
                         <p><strong>Total Paid:</strong> {{ $buy->payment->paymentItems->sum('amount') }}</p>
                         <p><strong>Total Due:</strong> {{ $buy->buyItems->sum(function($item) { return $item->amount * $item->quantity; }) - $buy->payment->paymentItems->sum('amount') }}</p>
+                    </div>
                     </div>
                 </div>
             </div>

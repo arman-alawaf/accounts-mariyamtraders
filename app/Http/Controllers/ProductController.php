@@ -14,7 +14,7 @@ class ProductController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $products = Product::select(['id', 'name', 'created_at']);
+            $products = Product::select(['id', 'name', 'created_at'])->orderBy('id', 'desc');
             return DataTables::of($products)
                 ->addIndexColumn()
                 ->editColumn('created_at', function ($product) {

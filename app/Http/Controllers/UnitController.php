@@ -14,7 +14,7 @@ class UnitController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $units = Unit::select(['id', 'name', 'created_at']);
+            $units = Unit::select(['id', 'name', 'created_at'])->orderBy('id', 'desc');
             return DataTables::of($units)
                 ->addIndexColumn()
                 ->editColumn('created_at', function ($unit) {

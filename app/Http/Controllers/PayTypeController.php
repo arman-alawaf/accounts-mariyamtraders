@@ -14,7 +14,7 @@ class PayTypeController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $payTypes = PayType::select(['id', 'name', 'created_at']);
+            $payTypes = PayType::select(['id', 'name', 'created_at'])->orderBy('id', 'desc');
 
             return DataTables::of($payTypes)
                 ->addIndexColumn()

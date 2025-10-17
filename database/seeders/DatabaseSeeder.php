@@ -16,6 +16,7 @@ use App\Models\Payment;
 use App\Models\PaymentItem;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class DatabaseSeeder extends Seeder
 {
@@ -50,20 +51,54 @@ class DatabaseSeeder extends Seeder
             'password' => bcrypt('password'),
         ]);
 
+        // Delete previous suppliers and customers data
+        Supplier::query()->delete();
+        Customer::query()->delete();
+
+        // Reset auto-increment IDs
+        DB::statement('ALTER TABLE suppliers AUTO_INCREMENT = 1');
+        DB::statement('ALTER TABLE customers AUTO_INCREMENT = 1');
+
         // Suppliers
-        Supplier::factory(100)->create();
+        Supplier::factory(20)->create();
         Supplier::create(['name' => 'Supplier A', 'email' => 'supplierA@example.com', 'phone' => '1234567890', 'address' => 'Address A']);
         Supplier::create(['name' => 'Supplier B', 'email' => 'supplierB@example.com', 'phone' => '0987654321', 'address' => 'Address B']);
 
         // Customers
-        Customer::factory(100)->create();
+        Customer::factory(20)->create();
         Customer::create(['name' => 'Customer A', 'email' => 'customerA@example.com', 'phone' => '1111111111', 'address' => 'Address C']);
         Customer::create(['name' => 'Customer B', 'email' => 'customerB@example.com', 'phone' => '2222222222', 'address' => 'Address D']);
+
+        // Delete previous pay types data
+        PayType::query()->delete();
+
+        // Reset auto-increment ID
+        DB::statement('ALTER TABLE pay_types AUTO_INCREMENT = 1');
 
         // Pay Types
         PayType::create(['name' => 'Cash']);
         PayType::create(['name' => 'Credit Card']);
         PayType::create(['name' => 'Bank Transfer']);
+
+        // Delete previous product data and related records
+        BuyItem::query()->delete();
+        SellItem::query()->delete();
+        Buy::query()->delete();
+        Sell::query()->delete();
+        Payment::query()->delete();
+        PaymentItem::query()->delete();
+        Product::query()->delete();
+        Unit::query()->delete();
+
+        // Reset auto-increment IDs
+        DB::statement('ALTER TABLE products AUTO_INCREMENT = 1');
+        DB::statement('ALTER TABLE buys AUTO_INCREMENT = 1');
+        DB::statement('ALTER TABLE buy_items AUTO_INCREMENT = 1');
+        DB::statement('ALTER TABLE sells AUTO_INCREMENT = 1');
+        DB::statement('ALTER TABLE sell_items AUTO_INCREMENT = 1');
+        DB::statement('ALTER TABLE payments AUTO_INCREMENT = 1');
+        DB::statement('ALTER TABLE payment_items AUTO_INCREMENT = 1');
+        DB::statement('ALTER TABLE units AUTO_INCREMENT = 1');
 
         // Units
         Unit::create(['name' => 'Piece']);
@@ -71,10 +106,32 @@ class DatabaseSeeder extends Seeder
         Unit::create(['name' => 'Liter']);
 
         // Products
-        Product::factory(100)->create();
-        $product1 = Product::create(['name' => 'Product 1']);
-        $product2 = Product::create(['name' => 'Product 2']);
-        $product3 = Product::create(['name' => 'Product 3']);
+        $fruits = [
+            ['name' => 'Mango'],
+            ['name' => 'Jackfruit'],
+            ['name' => 'Banana'],
+            ['name' => 'Litchi'],
+            ['name' => 'Guava'],
+            ['name' => 'Papaya'],
+            ['name' => 'Watermelon'],
+            ['name' => 'Pineapple'],
+            ['name' => 'Coconut'],
+            ['name' => 'Starfruit'],
+            ['name' => 'Blackberry'],
+            ['name' => 'Wood Apple'],
+            ['name' => 'Olive'],
+            ['name' => 'Palm Fruit'],
+            ['name' => 'Tamarind'],
+        ];
+
+        $products = [];
+        foreach ($fruits as $fruit) {
+            $products[] = Product::create($fruit);
+        }
+
+        $product1 = $products[0]; // Mango
+        $product2 = $products[1]; // Jackfruit
+        $product3 = $products[2]; // Banana
 
         // Units
         $unit1 = Unit::where('name', 'Piece')->first();

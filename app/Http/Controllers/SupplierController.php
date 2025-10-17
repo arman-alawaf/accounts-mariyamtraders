@@ -14,7 +14,7 @@ class SupplierController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $suppliers = Supplier::select(['id', 'name', 'company_name', 'phone', 'email', 'address', 'created_at']);
+            $suppliers = Supplier::select(['id', 'name', 'company_name', 'phone', 'email', 'address', 'created_at'])->orderBy('id', 'desc');
             return DataTables::of($suppliers)
                 ->addIndexColumn()
                 ->editColumn('created_at', function ($supplier) {
@@ -89,7 +89,7 @@ class SupplierController extends Controller
             'name' => 'required|string|max:255',
             'company_name' => 'nullable|string|max:255',
             'phone' => 'required|string|max:255',
-            'email' => 'required|email|unique:suppliers,email,' . $id,
+            // 'email' => 'required|email|unique:suppliers,email,' . $id,
             'address' => 'required|string',
         ]);
 

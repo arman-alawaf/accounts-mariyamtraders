@@ -22,7 +22,7 @@ class BuyController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $query = Buy::with('supplier')->select(['id', 'supplier_id', 'date', 'created_at']);
+            $query = Buy::with('supplier')->select(['id', 'supplier_id', 'date', 'created_at'])->orderBy('id', 'desc');
 
             if ($request->has('date') && !empty($request->date)) {
                 $query->whereDate('date', $request->date);

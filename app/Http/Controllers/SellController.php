@@ -22,7 +22,7 @@ class SellController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $sells = Sell::with('customer')->select(['id', 'customer_id', 'created_at']);
+            $sells = Sell::with('customer')->select(['id', 'customer_id', 'created_at'])->orderBy('id', 'desc');
 
             return DataTables::of($sells)
                 ->addIndexColumn()
