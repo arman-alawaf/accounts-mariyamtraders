@@ -22,8 +22,8 @@
                             <tr>
                                 <th>Product</th>
                                 <th>Unit</th>
-                                <th>Amount</th>
                                 <th>Quantity</th>
+                                <th>UnitPrice</th>
                                 <th>Total</th>
                                 <th>Note</th>
                             </tr>
@@ -33,8 +33,8 @@
                                 <tr>
                                     <td>{{ $item->product->name }}</td>
                                     <td>{{ $item->unit->name }}</td>
-                                    <td>{{ $item->amount }}</td>
                                     <td>{{ $item->quantity }}</td>
+                                    <td>{{ $item->amount }}</td>
                                     <td>{{ $item->amount * $item->quantity }}</td>
                                     <td>{{ $item->note }}</td>
                                 </tr>
