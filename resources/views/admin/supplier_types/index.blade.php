@@ -20,8 +20,8 @@
                             <tr>
                                 <th>#</th>
                                 <th>ID</th>
-                                <th>Supplier Name</th>
-                                <th>Number</th>
+                                <th>SupplierName</th>
+                                <th>TransactionMethod</th>
                                 <th>Created At</th>
                                 <th>Actions</th>
                             </tr>
