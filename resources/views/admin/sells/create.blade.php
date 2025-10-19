@@ -25,7 +25,7 @@
                         <div class="mb-3">
                             <label for="customer_type_id" class="form-label">Customer Type</label>
                             <select class="form-control select2" id="customer_type_id" name="customer_type_id">
-                                <option value="">Select Customer Type</option>
+                                <option value="">Select Transaction Method</option>
                             </select>
                             @error('customer_type_id') <div class="text-danger">{{ $message }}</div> @enderror
                         </div>
@@ -57,11 +57,11 @@
                                         <input type="number" class="form-control quantity" name="sell_items[0][quantity]" required>
                                     </div>
                                     <div class="col-md-2">
-                                        <label>Unit Price</label>
+                                        <label>Unit Price [BDT]</label>
                                         <input type="number" step="0.01" class="form-control unit-price" name="sell_items[0][unit_price]" required>
                                     </div>
                                     <div class="col-md-2">
-                                        <label>Amount</label>
+                                        <label>Total Amount [BDT]</label>
                                         <input type="number" step="0.01" class="form-control amount" name="sell_items[0][amount]" readonly required>
                                     </div>
                                     <div class="col-md-2">
@@ -94,7 +94,7 @@
                                         </select>
                                     </div>
                                     <div class="col-md-5">
-                                        <label>Amount</label>
+                                        <label>Received Amount [BDT]</label>
                                         <input type="number" step="0.01" class="form-control" name="payment_items[0][amount]" required>
                                     </div>
                                     <div class="col-md-2">
@@ -106,8 +106,8 @@
                         <button type="button" id="addPaymentItem" class="btn btn-secondary">Add Payment Item</button>
 
                         <div class="mt-3">
-                            <h6>Total Paid: <span id="totalPaid">0.00</span></h6>
-                            <h6>Due Amount: <span id="dueAmount">0.00</span></h6>
+                            <h6>Total Received [BDT]: <span id="totalPaid">0.00</span></h6>
+                            <h6>Receivable Amount [BDT]: <span id="dueAmount">0.00</span></h6>
                         </div>
 
                         <div class="mt-4">

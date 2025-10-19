@@ -14,7 +14,7 @@
 
                 <div class="card-body">
                     <h5>Supplier: {{ $buy->supplier->name }}</h5>
-                    <p>Date: {{ $buy->date ? \Carbon\Carbon::parse($buy->date)->format('Y-m-d H:i') : $buy->created_at->format('Y-m-d H:i') }}</p>
+                    <p>Date: {{ $buy->date ? \Carbon\Carbon::parse($buy->date)->format('d M Y') : $buy->created_at->format('d M Y') }}</p>
 
                     <h5>Buy Items</h5>
                     <table class="table table-striped">

@@ -21,7 +21,7 @@
                             <td>{{ $customerType->customer->name ?? 'N/A' }}</td>
                         </tr>
                         <tr>
-                            <th>Number</th>
+                            <th>TransactionMethod</th>
                             <td>{{ $customerType->number }}</td>
                         </tr>
                         <tr>

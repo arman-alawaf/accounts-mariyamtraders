@@ -26,7 +26,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="number">Number</label>
+                            <label for="number">TransactionMethod</label>
                             <input type="text" name="number" id="number" class="form-control" value="{{ $supplierType->number }}" required>
                         </div>
 

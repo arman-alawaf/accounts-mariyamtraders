@@ -16,7 +16,7 @@
 
                         <div class="form-group">
                             <label for="customer_id">Customer</label>
-                            <select name="customer_id" id="customer_id" class="form-control" required>
+                            <select name="customer_id" id="customer_id" class="form-select" required>
                                 <option value="">Select Customer</option>
                                 @foreach($customers as $customer)
                                     <option value="{{ $customer->id }}">{{ $customer->name }}</option>
@@ -25,7 +25,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="number">Number</label>
+                            <label for="number">TransactionMethod</label>
                             <input type="text" name="number" id="number" class="form-control" required>
                         </div>
 

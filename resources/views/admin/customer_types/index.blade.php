@@ -20,8 +20,8 @@
                             <tr>
                                 <th>#</th>
                                 <th>ID</th>
-                                <th>Customer Name</th>
-                                <th>Number</th>
+                                <th>CustomerName</th>
+                                <th>TransactionMethod</th>
                                 <th>Created At</th>
                                 <th>Actions</th>
                             </tr>
