@@ -52,7 +52,7 @@
                                             @endforeach
                                         </select>
                                     </div>
-                                    <div class="col-md-2">
+                                    <div class="col-md-1">
                                         <label>Quantity</label>
                                         <input type="number" class="form-control quantity" name="sell_items[0][quantity]" required>
                                     </div>

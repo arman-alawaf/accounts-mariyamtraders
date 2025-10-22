@@ -23,8 +23,8 @@
                                 <th>Product</th>
                                 <th>Unit</th>
                                 <th>Quantity</th>
-                                <th>Unit Price</th>
-                                <th>Total</th>
+                                <th>Unit Price [BDT]</th>
+                                <th>Total [BDT]</th>
                                 <th>Note</th>
                             </tr>
                         </thead>
@@ -42,7 +42,7 @@
                         </tbody>
                         <tfoot>
                             <tr>
-                                <th colspan="3">Subtotal</th>
+                                <th colspan="2">Subtotal</th>
                                 <th>{{ $buy->buyItems->sum('quantity') }}</th>
                                 <th></th>
                                 <th>{{ $buy->buyItems->sum(function($item) { return $item->unit_price * $item->quantity; }) }}</th>
@@ -50,12 +50,12 @@
                             </tr>
                             @if($buy->discount > 0)
                             <tr>
-                                <th colspan="5">Discount</th>
+                                <th colspan="4">Discount</th>
                                 <th>{{ $buy->discount }}</th>
                                 <th></th>
                             </tr>
                             <tr>
-                                <th colspan="5">Total After Discount</th>
+                                <th colspan="4">Total After Discount</th>
                                 <th>{{ $buy->buyItems->sum(function($item) { return $item->unit_price * $item->quantity; }) - $buy->discount }}</th>
                                 <th></th>
                             </tr>
@@ -68,7 +68,7 @@
                         <thead>
                             <tr>
                                 <th>Pay Type</th>
-                                <th>Amount</th>
+                                <th>Amount [BDT]</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -93,7 +93,7 @@
                         <thead>
                             <tr>
                                 <th>Expense Name</th>
-                                <th>Amount</th>
+                                <th>Amount [BDT]</th>
                             </tr>
                         </thead>
                         <tbody>

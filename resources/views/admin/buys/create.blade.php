@@ -44,6 +44,7 @@
                         <div id="buyItems">
                             <div class="buy-item mb-3 border p-3">
                                 <div class="row">
+
                                     <div class="col-md-2">
                                         <label>Product</label>
                                         <select class="form-control select2 product-select" name="buy_items[0][product_id]" required>
@@ -62,7 +63,7 @@
                                             @endforeach
                                         </select>
                                     </div>
-                                    <div class="col-md-2">
+                                    <div class="col-md-1">
                                         <label>Quantity</label>
                                         <input type="number" class="form-control quantity" name="buy_items[0][quantity]" required>
                                     </div>
@@ -74,13 +75,14 @@
                                         <label>Total Amount [BDT]</label>
                                         <input type="number" step="0.01" class="form-control amount" name="buy_items[0][amount]" readonly required>
                                     </div>
-                                    <div class="col-md-3">
+                                    <div class="col-md-2">
                                         <label>Note</label>
                                         <input type="text" class="form-control" name="buy_items[0][note]">
                                     </div>
                                     <div class="col-md-1">
                                         <button type="button" class="btn btn-danger remove-item" style="margin-top: 30px;">Remove</button>
                                     </div>
+
                                 </div>
                             </div>
                         </div>
@@ -163,7 +165,7 @@
                         </div>
 
                         <div class="mt-4">
-                            <button type="submit" class="btn btn-primary">Create Buy</button>
+                            <button type="submit" class="btn btn-primary px-5">Create Buy</button>
                             <a href="{{ route('buys.index') }}" class="btn btn-secondary">Cancel</a>
                         </div>
                     </form>
