@@ -14,11 +14,14 @@ class CustomerController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $customers = Customer::select(['id', 'name', 'company_name', 'phone', 'email', 'address', 'created_at'])->orderBy('id', 'desc');
+            $customers = Customer::select(['id', 'name', 'company_name', 'phone', 'email', 'address', 'status', 'created_at'])->orderBy('id', 'desc');
             return DataTables::of($customers)
                 ->addIndexColumn()
                 ->editColumn('created_at', function ($customer) {
                     return $customer->created_at->setTimezone('Asia/Dhaka')->format('g:i A, j F Y');
+                })
+                ->addColumn('status', function ($customer) {
+                    return $customer->status === 'active' ? '<span class="badge bg-success">Active</span>' : '<span class="badge bg-danger">Inactive</span>';
                 })
                 ->addColumn('action', function ($customer) {
                     return '<a href="' . route('customers.edit', $customer->id) . '" class="btn btn-warning btn-sm">Edit</a>
@@ -28,7 +31,7 @@ class CustomerController extends Controller
                                 <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm(\'Are you sure?\')">Delete</button>
                             </form>';
                 })
-                ->rawColumns(['action'])
+                ->rawColumns(['status', 'action'])
                 ->make(true);
         }
         return view('admin.customers.index');
@@ -53,9 +56,10 @@ class CustomerController extends Controller
             'phone' => 'required|string|max:255',
             'email' => 'required|email|unique:customers',
             'address' => 'required|string',
+            'status' => 'required|in:active,inactive',
         ]);
 
-        Customer::create($request->only(['name', 'company_name', 'phone', 'email', 'address']));
+        Customer::create($request->only(['name', 'company_name', 'phone', 'email', 'address', 'status']));
 
         return redirect()->route('customers.index')->with('success', 'Customer created successfully.');
     }
@@ -91,9 +95,10 @@ class CustomerController extends Controller
             'phone' => 'required|string|max:255',
             // 'email' => 'required|email|unique:customers,email,' . $id,
             'address' => 'required|string',
+            'status' => 'required|in:active,inactive',
         ]);
 
-        $customer->update($request->only(['name', 'company_name', 'phone', 'email', 'address']));
+        $customer->update($request->only(['name', 'company_name', 'phone', 'email', 'address', 'status']));
 
         return redirect()->route('customers.index')->with('success', 'Customer updated successfully.');
     }

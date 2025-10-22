@@ -71,6 +71,9 @@
                                 <li class="nav-item">
                                     <a class="nav-link {{ request()->routeIs('reports.index') ? 'active' : '' }}" href="{{ route('reports.index') }}">Reports</a>
                                 </li>
+                                <li class="nav-item">
+                                    <a class="nav-link {{ request()->routeIs('expense_names.index') ? 'active' : '' }}" href="{{ route('expense_names.index') }}">Expense Names</a>
+                                </li>
                             @endif
                             @if(auth()->user()->role === 'manager')
                                 <li class="nav-item">

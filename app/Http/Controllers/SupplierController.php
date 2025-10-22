@@ -14,11 +14,14 @@ class SupplierController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $suppliers = Supplier::select(['id', 'name', 'company_name', 'phone', 'email', 'address', 'created_at'])->orderBy('id', 'desc');
+            $suppliers = Supplier::select(['id', 'name', 'company_name', 'phone', 'email', 'address', 'status', 'created_at'])->orderBy('id', 'desc');
             return DataTables::of($suppliers)
                 ->addIndexColumn()
                 ->editColumn('created_at', function ($supplier) {
                     return $supplier->created_at->setTimezone('Asia/Dhaka')->format('g:i A, j F Y');
+                })
+                ->addColumn('status', function ($supplier) {
+                    return $supplier->status === 'active' ? '<span class="badge bg-success">Active</span>' : '<span class="badge bg-danger">Inactive</span>';
                 })
                 ->addColumn('action', function ($supplier) {
                     return '<a href="' . route('suppliers.edit', $supplier->id) . '" class="btn btn-warning btn-sm">Edit</a>
@@ -28,7 +31,7 @@ class SupplierController extends Controller
                                 <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm(\'Are you sure?\')">Delete</button>
                             </form>';
                 })
-                ->rawColumns(['action'])
+                ->rawColumns(['status', 'action'])
                 ->make(true);
         }
         return view('admin.suppliers.index');
@@ -53,9 +56,10 @@ class SupplierController extends Controller
             'phone' => 'required|string|max:255',
             'email' => 'required|email|unique:suppliers',
             'address' => 'required|string',
+            'status' => 'required|in:active,inactive',
         ]);
 
-        Supplier::create($request->only(['name', 'company_name', 'phone', 'email', 'address']));
+        Supplier::create($request->only(['name', 'company_name', 'phone', 'email', 'address', 'status']));
 
         return redirect()->route('suppliers.index')->with('success', 'Supplier created successfully.');
     }
@@ -91,9 +95,10 @@ class SupplierController extends Controller
             'phone' => 'required|string|max:255',
             // 'email' => 'required|email|unique:suppliers,email,' . $id,
             'address' => 'required|string',
+            'status' => 'required|in:active,inactive',
         ]);
 
-        $supplier->update($request->only(['name', 'company_name', 'phone', 'email', 'address']));
+        $supplier->update($request->only(['name', 'company_name', 'phone', 'email', 'address', 'status']));
 
         return redirect()->route('suppliers.index')->with('success', 'Supplier updated successfully.');
     }

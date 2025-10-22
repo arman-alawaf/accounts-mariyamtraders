@@ -95,6 +95,15 @@ Route::middleware(['auth', 'admin'])->group(function () {
         'destroy' => 'buys.destroy',
     ]);
     Route::get('reports', [App\Http\Controllers\ReportController::class, 'index'])->name('reports.index');
+    Route::resource('expense_names', App\Http\Controllers\ExpenseNameController::class)->names([
+        'index' => 'expense_names.index',
+        'create' => 'expense_names.create',
+        'store' => 'expense_names.store',
+        'show' => 'expense_names.show',
+        'edit' => 'expense_names.edit',
+        'update' => 'expense_names.update',
+        'destroy' => 'expense_names.destroy',
+    ]);
 });
 
 Route::middleware(['auth', 'manager'])->group(function () {

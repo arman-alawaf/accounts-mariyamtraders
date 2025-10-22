@@ -26,6 +26,7 @@
                                 <th>Phone</th>
                                 <th>Email</th>
                                 <th>Address</th>
+                                <th>Status</th>
                                 <th>Created At</th>
                                 <th>Actions</th>
                             </tr>
@@ -54,6 +55,7 @@ $(document).ready(function() {
             { data: 'phone', name: 'phone' },
             { data: 'email', name: 'email' },
             { data: 'address', name: 'address' },
+            { data: 'status', name: 'status', orderable: false, searchable: false },
             { data: 'created_at', name: 'created_at' },
             { data: 'action', name: 'action', orderable: false, searchable: false }
         ]
