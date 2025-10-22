@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Buy;
 use App\Models\BuyItem;
+use App\Models\BuyExpenseItem;
 use App\Models\Payment;
 use App\Models\PaymentItem;
 use App\Models\Supplier;
 use App\Models\Product;
 use App\Models\Unit;
 use App\Models\PayType;
+use App\Models\ExpenseName;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\DataTables;
@@ -62,7 +64,8 @@ class BuyController extends Controller
         $products = Product::all();
         $units = Unit::all();
         $payTypes = PayType::all();
-        return view('admin.buys.create', compact('suppliers', 'products', 'units', 'payTypes'));
+        $expenseNames = ExpenseName::all();
+        return view('admin.buys.create', compact('suppliers', 'products', 'units', 'payTypes', 'expenseNames'));
     }
 
     /**
@@ -81,6 +84,9 @@ class BuyController extends Controller
             'buy_items.*.unit_price' => 'required|numeric|min:0',
             'buy_items.*.quantity' => 'required|integer|min:1',
             'buy_items.*.note' => 'nullable|string',
+            'expense_items' => 'nullable|array',
+            'expense_items.*.expense_name_id' => 'required_with:expense_items|exists:expense_names,id',
+            'expense_items.*.amount' => 'required_with:expense_items|numeric|min:0',
             'payment_items' => 'required|array|min:1',
             'payment_items.*.paytype_id' => 'required|exists:pay_types,id',
             'payment_items.*.amount' => 'required|numeric|min:0',
@@ -135,6 +141,16 @@ class BuyController extends Controller
                     'amount' => $item['amount'],
                 ]);
             }
+
+            if ($request->has('expense_items') && is_array($request->expense_items)) {
+                foreach ($request->expense_items as $item) {
+                    BuyExpenseItem::create([
+                        'buy_id' => $buy->id,
+                        'expense_name_id' => $item['expense_name_id'],
+                        'amount' => $item['amount'],
+                    ]);
+                }
+            }
         });
 
         return redirect()->route('buys.index')->with('success', 'Buy created successfully.');
@@ -145,7 +161,7 @@ class BuyController extends Controller
      */
     public function show(string $id)
     {
-        $buy = Buy::with('supplier', 'buyItems.product', 'buyItems.unit', 'payment.paymentItems.paytype')->findOrFail($id);
+        $buy = Buy::with('supplier', 'buyItems.product', 'buyItems.unit', 'payment.paymentItems.paytype', 'buyExpenseItems.expenseName')->findOrFail($id);
         return view('admin.buys.show', compact('buy'));
     }
 

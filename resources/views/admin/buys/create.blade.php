@@ -124,9 +124,42 @@
                         </div>
                         <button type="button" id="addPaymentItem" class="btn btn-secondary">Add Payment Item</button>
 
+
+
                         <div class="mt-3">
                             <h6>Total Paid Amount [BDT]: <span id="totalPaid">0.00</span></h6>
                             <h6>Payable Amount [BDT]: <span id="dueAmount">0.00</span></h6>
+                        </div>
+
+
+
+                        <h5 class="mt-4">Expense Items</h5>
+                        <div id="expenseItems">
+                            <div class="expense-item mb-3 border p-3">
+                                <div class="row">
+                                    <div class="col-md-5">
+                                        <label>Expense Name</label>
+                                        <select class="form-control select2" name="expense_items[0][expense_name_id]" required>
+                                            <option value="">Select Expense Name</option>
+                                            @foreach($expenseNames as $expenseName)
+                                                <option value="{{ $expenseName->id }}">{{ $expenseName->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <label>Amount [BDT]</label>
+                                        <input type="number" step="0.01" class="form-control" name="expense_items[0][amount]" required>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button type="button" class="btn btn-danger remove-expense" style="margin-top: 30px;">Remove</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="button" id="addExpenseItem" class="btn btn-secondary">Add Expense Item</button>
+
+                        <div class="mt-3">
+                            <h6>Total Expenses: <span id="totalExpenses">0.00</span></h6>
                         </div>
 
                         <div class="mt-4">
@@ -143,6 +176,7 @@
 <script>
 let buyItemIndex = 1;
 let paymentItemIndex = 1;
+let expenseItemIndex = 1;
 
 $(document).ready(function() {
     $('.select2').select2({
@@ -203,6 +237,11 @@ $(document).ready(function() {
         calculateTotalAmount();
     });
 
+    // Calculate total expenses when expense amounts change
+    $(document).on('input', '.expense-item input[name*="[amount]"]', function() {
+        calculateTotalExpenses();
+    });
+
     // Calculate subtotal
     function calculateSubtotal() {
         var subtotal = 0;
@@ -236,10 +275,19 @@ $(document).ready(function() {
         calculateDueAmount();
     }
 
+    function calculateTotalExpenses() {
+        var totalExpenses = 0;
+        $('.expense-item input[name*="[amount]"]').each(function() {
+            totalExpenses += parseFloat($(this).val()) || 0;
+        });
+        $('#totalExpenses').text(totalExpenses.toFixed(2));
+    }
+
     function calculateDueAmount() {
         var totalAmount = parseFloat($('#totalAmount').text()) || 0;
+        var totalExpenses = parseFloat($('#totalExpenses').text()) || 0;
         var totalPaid = parseFloat($('#totalPaid').text()) || 0;
-        var dueAmount = totalAmount - totalPaid;
+        var dueAmount = (totalAmount + totalExpenses) - totalPaid;
         $('#dueAmount').text(dueAmount.toFixed(2));
     }
 });
@@ -322,12 +370,56 @@ document.getElementById('addPaymentItem').addEventListener('click', function() {
     paymentItemIndex++;
 });
 
+document.getElementById('addExpenseItem').addEventListener('click', function() {
+    const expenseItems = document.getElementById('expenseItems');
+    const template = document.querySelector('.expense-item');
+    const newItem = template.cloneNode(true);
+    const selects = newItem.querySelectorAll('select');
+    selects.forEach(select => {
+        select.name = select.name.replace(/\[\d+\]/, '[' + expenseItemIndex + ']');
+        select.value = '';
+        // Remove existing Select2
+        if ($(select).hasClass('select2-hidden-accessible')) {
+            $(select).select2('destroy');
+        }
+        // Reinitialize
+        $(select).select2({
+            minimumResultsForSearch: -1,
+            placeholder: 'Search...',
+            allowClear: true,
+            width: '100%',
+            matcher: function(params, data) {
+                if ($.trim(params.term) === '') {
+                    return data;
+                }
+                if (typeof data.text === 'undefined') {
+                    return null;
+                }
+                if (data.text.toLowerCase().indexOf(params.term.toLowerCase()) > -1) {
+                    return data;
+                }
+                return null;
+            }
+        });
+    });
+    const inputs = newItem.querySelectorAll('input');
+    inputs.forEach(input => {
+        input.name = input.name.replace(/\[\d+\]/, '[' + expenseItemIndex + ']');
+        input.value = '';
+    });
+    expenseItems.appendChild(newItem);
+    expenseItemIndex++;
+});
+
 document.addEventListener('click', function(e) {
     if (e.target.classList.contains('remove-item')) {
         e.target.closest('.buy-item').remove();
     }
     if (e.target.classList.contains('remove-payment')) {
         e.target.closest('.payment-item').remove();
+    }
+    if (e.target.classList.contains('remove-expense')) {
+        e.target.closest('.expense-item').remove();
     }
 });
 </script>

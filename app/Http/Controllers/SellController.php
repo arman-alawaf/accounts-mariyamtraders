@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Sell;
 use App\Models\SellItem;
+use App\Models\SellExpenseItem;
 use App\Models\Payment;
 use App\Models\PaymentItem;
 use App\Models\Customer;
 use App\Models\Product;
 use App\Models\Unit;
 use App\Models\PayType;
+use App\Models\ExpenseName;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\DataTables;
@@ -55,7 +57,8 @@ class SellController extends Controller
         $products = Product::all();
         $units = Unit::all();
         $payTypes = PayType::all();
-        return view('admin.sells.create', compact('customers', 'products', 'units', 'payTypes'));
+        $expenseNames = ExpenseName::all();
+        return view('admin.sells.create', compact('customers', 'products', 'units', 'payTypes', 'expenseNames'));
     }
 
     /**
@@ -73,6 +76,9 @@ class SellController extends Controller
             'sell_items.*.unit_price' => 'required|numeric|min:0',
             'sell_items.*.quantity' => 'required|integer|min:1',
             'sell_items.*.note' => 'nullable|string',
+            'expense_items' => 'nullable|array',
+            'expense_items.*.expense_name_id' => 'required_with:expense_items|exists:expense_names,id',
+            'expense_items.*.amount' => 'required_with:expense_items|numeric|min:0',
             'payment_items' => 'required|array|min:1',
             'payment_items.*.paytype_id' => 'required|exists:pay_types,id',
             'payment_items.*.amount' => 'required|numeric|min:0',
@@ -126,6 +132,16 @@ class SellController extends Controller
                     'amount' => $item['amount'],
                 ]);
             }
+
+            if ($request->has('expense_items') && is_array($request->expense_items)) {
+                foreach ($request->expense_items as $item) {
+                    SellExpenseItem::create([
+                        'sell_id' => $sell->id,
+                        'expense_name_id' => $item['expense_name_id'],
+                        'amount' => $item['amount'],
+                    ]);
+                }
+            }
         });
 
         return redirect()->route('sells.index')->with('success', 'Sell created successfully.');
@@ -136,7 +152,7 @@ class SellController extends Controller
      */
     public function show(string $id)
     {
-        $sell = Sell::with('customer', 'sellItems.product', 'sellItems.unit', 'payment.paymentItems.paytype')->findOrFail($id);
+        $sell = Sell::with('customer', 'sellItems.product', 'sellItems.unit', 'payment.paymentItems.paytype', 'sellExpenseItems.expenseName')->findOrFail($id);
         return view('admin.sells.show', compact('sell'));
     }
 

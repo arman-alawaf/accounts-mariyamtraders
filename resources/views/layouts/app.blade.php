@@ -51,6 +51,9 @@
                                     <a class="nav-link {{ request()->routeIs('units.index') ? 'active' : '' }}" href="{{ route('units.index') }}">Units</a>
                                 </li>
                                 <li class="nav-item">
+                                    <a class="nav-link {{ request()->routeIs('expense_names.index') ? 'active' : '' }}" href="{{ route('expense_names.index') }}">Expense Names</a>
+                                </li>
+                                <li class="nav-item">
                                     <a class="nav-link {{ request()->routeIs('products.index') ? 'active' : '' }}" href="{{ route('products.index') }}">Products</a>
                                 </li>
                                 <li class="nav-item">
@@ -70,9 +73,6 @@
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link {{ request()->routeIs('reports.index') ? 'active' : '' }}" href="{{ route('reports.index') }}">Reports</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link {{ request()->routeIs('expense_names.index') ? 'active' : '' }}" href="{{ route('expense_names.index') }}">Expense Names</a>
                                 </li>
                             @endif
                             @if(auth()->user()->role === 'manager')

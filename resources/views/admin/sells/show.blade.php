@@ -87,6 +87,32 @@
                         </tfoot>
                     </table>
 
+                    @if($sell->sellExpenseItems->count() > 0)
+                    <h5>Expense Items</h5>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Expense Name</th>
+                                <th>Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($sell->sellExpenseItems as $item)
+                                <tr>
+                                    <td>{{ $item->expenseName->name }}</td>
+                                    <td>{{ $item->amount }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th>Total Expenses</th>
+                                <th>{{ $sell->sellExpenseItems->sum('amount') }}</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                    @endif
+
                     <div class="row justify-content-center">
                     <div class="col-md-4 mt-3 card p-2">
                         <p><strong>Subtotal:</strong> {{ $sell->sellItems->sum(function($item) { return $item->unit_price * $item->quantity; }) }}</p>
@@ -95,6 +121,10 @@
                         <p><strong>Total:</strong> {{ $sell->total_amount }}</p>
                         @else
                         <p><strong>Total:</strong> {{ $sell->sellItems->sum(function($item) { return $item->unit_price * $item->quantity; }) }}</p>
+                        @endif
+                        @if($sell->sellExpenseItems->count() > 0)
+                        <p><strong>Total Expenses:</strong> {{ $sell->sellExpenseItems->sum('amount') }}</p>
+                        <p><strong>Grand Total:</strong> {{ $sell->total_amount + $sell->sellExpenseItems->sum('amount') }}</p>
                         @endif
                         <p><strong>Total Paid:</strong> {{ $sell->paid_amount }}</p>
                         <p><strong>Total Due:</strong> {{ $sell->due_amount }}</p>

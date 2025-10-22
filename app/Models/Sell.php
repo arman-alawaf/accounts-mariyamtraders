@@ -27,4 +27,9 @@ class Sell extends Model
     {
         return $this->belongsTo(Payment::class);
     }
+
+    public function sellExpenseItems()
+    {
+        return $this->hasMany(SellExpenseItem::class);
+    }
 }
