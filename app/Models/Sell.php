@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Sell extends Model
 {
-    protected $fillable = ['customer_id', 'customer_type_id', 'payment_id', 'total_amount', 'paid_amount', 'due_amount'];
+    protected $fillable = ['customer_id', 'customer_type_id', 'payment_id', 'total_amount', 'paid_amount', 'due_amount', 'discount'];
 
     public function customer()
     {

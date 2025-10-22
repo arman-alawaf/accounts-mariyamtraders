@@ -74,6 +74,7 @@ class BuyController extends Controller
             'supplier_id' => 'required|exists:suppliers,id',
             'supplier_type_id' => 'nullable|exists:supplier_types,id',
             'date' => 'required|date',
+            'discount' => 'nullable|numeric|min:0',
             'buy_items' => 'required|array|min:1',
             'buy_items.*.product_id' => 'required|exists:products,id',
             'buy_items.*.unit_id' => 'required|exists:units,id',
@@ -88,11 +89,31 @@ class BuyController extends Controller
         DB::transaction(function () use ($request) {
             $payment = Payment::create();
 
+            // Calculate total amount from buy items
+            $totalAmount = 0;
+            foreach ($request->buy_items as $item) {
+                $totalAmount += $item['unit_price'] * $item['quantity'];
+            }
+
+            // Calculate paid amount from payment items
+            $paidAmount = 0;
+            foreach ($request->payment_items as $item) {
+                $paidAmount += $item['amount'];
+            }
+
+            $discount = $request->discount ?? 0;
+            $totalAmountAfterDiscount = $totalAmount - $discount;
+            $dueAmount = $totalAmountAfterDiscount - $paidAmount;
+
             $buy = Buy::create([
                 'supplier_id' => $request->supplier_id,
                 'supplier_type_id' => $request->supplier_type_id,
                 'payment_id' => $payment->id,
-                'date' => $request->date
+                'date' => $request->date,
+                'total_amount' => $totalAmountAfterDiscount,
+                'paid_amount' => $paidAmount,
+                'due_amount' => $dueAmount,
+                'discount' => $discount
             ]);
 
             foreach ($request->buy_items as $item) {

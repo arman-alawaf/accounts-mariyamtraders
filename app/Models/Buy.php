@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Buy extends Model
 {
-    protected $fillable = ['supplier_id', 'supplier_type_id', 'payment_id', 'total_amount', 'paid_amount', 'due_amount'];
+    protected $fillable = ['supplier_id', 'supplier_type_id', 'payment_id', 'total_amount', 'paid_amount', 'due_amount', 'discount'];
 
     public function supplier()
     {

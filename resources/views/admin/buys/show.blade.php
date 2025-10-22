@@ -48,6 +48,18 @@
                                 <th>{{ $buy->buyItems->sum(function($item) { return $item->unit_price * $item->quantity; }) }}</th>
                                 <th></th>
                             </tr>
+                            @if($buy->discount > 0)
+                            <tr>
+                                <th colspan="5">Discount</th>
+                                <th>{{ $buy->discount }}</th>
+                                <th></th>
+                            </tr>
+                            <tr>
+                                <th colspan="5">Total After Discount</th>
+                                <th>{{ $buy->buyItems->sum(function($item) { return $item->unit_price * $item->quantity; }) - $buy->discount }}</th>
+                                <th></th>
+                            </tr>
+                            @endif
                         </tfoot>
                     </table>
 
@@ -77,9 +89,15 @@
 
                     <div class="row justify-content-center">
                     <div class="col-md-4 mt-3 card p-2">
+                        <p><strong>Subtotal:</strong> {{ $buy->buyItems->sum(function($item) { return $item->unit_price * $item->quantity; }) }}</p>
+                        @if($buy->discount > 0)
+                        <p><strong>Discount:</strong> {{ $buy->discount }}</p>
+                        <p><strong>Total:</strong> {{ $buy->total_amount }}</p>
+                        @else
                         <p><strong>Total:</strong> {{ $buy->buyItems->sum(function($item) { return $item->unit_price * $item->quantity; }) }}</p>
-                        <p><strong>Total Paid:</strong> {{ $buy->payment->paymentItems->sum('amount') }}</p>
-                        <p><strong>Total Due:</strong> {{ $buy->buyItems->sum(function($item) { return $item->unit_price * $item->quantity; }) - $buy->payment->paymentItems->sum('amount') }}</p>
+                        @endif
+                        <p><strong>Total Paid:</strong> {{ $buy->paid_amount }}</p>
+                        <p><strong>Total Due:</strong> {{ $buy->due_amount }}</p>
                     </div>
                     </div>
                 </div>

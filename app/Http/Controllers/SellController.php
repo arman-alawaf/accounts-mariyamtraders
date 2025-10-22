@@ -66,6 +66,7 @@ class SellController extends Controller
         $request->validate([
             'customer_id' => 'required|exists:customers,id',
             'customer_type_id' => 'nullable|exists:customer_types,id',
+            'discount' => 'nullable|numeric|min:0',
             'sell_items' => 'required|array|min:1',
             'sell_items.*.product_id' => 'required|exists:products,id',
             'sell_items.*.unit_id' => 'required|exists:units,id',
@@ -80,10 +81,30 @@ class SellController extends Controller
         DB::transaction(function () use ($request) {
             $payment = Payment::create();
 
+            // Calculate total amount from sell items
+            $totalAmount = 0;
+            foreach ($request->sell_items as $item) {
+                $totalAmount += $item['unit_price'] * $item['quantity'];
+            }
+
+            // Calculate paid amount from payment items
+            $paidAmount = 0;
+            foreach ($request->payment_items as $item) {
+                $paidAmount += $item['amount'];
+            }
+
+            $discount = $request->discount ?? 0;
+            $totalAmountAfterDiscount = $totalAmount - $discount;
+            $dueAmount = $totalAmountAfterDiscount - $paidAmount;
+
             $sell = Sell::create([
                 'customer_id' => $request->customer_id,
                 'customer_type_id' => $request->customer_type_id,
-                'payment_id' => $payment->id
+                'payment_id' => $payment->id,
+                'total_amount' => $totalAmountAfterDiscount,
+                'paid_amount' => $paidAmount,
+                'due_amount' => $dueAmount,
+                'discount' => $discount
             ]);
 
             foreach ($request->sell_items as $item) {

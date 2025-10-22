@@ -48,6 +48,18 @@
                                 <th>{{ $sell->sellItems->sum(function($item) { return $item->unit_price * $item->quantity; }) }}</th>
                                 <th></th>
                             </tr>
+                            @if($sell->discount > 0)
+                            <tr>
+                                <th colspan="5">Discount</th>
+                                <th>{{ $sell->discount }}</th>
+                                <th></th>
+                            </tr>
+                            <tr>
+                                <th colspan="5">Total After Discount</th>
+                                <th>{{ $sell->sellItems->sum(function($item) { return $item->unit_price * $item->quantity; }) - $sell->discount }}</th>
+                                <th></th>
+                            </tr>
+                            @endif
                         </tfoot>
                     </table>
 
@@ -77,9 +89,15 @@
 
                     <div class="row justify-content-center">
                     <div class="col-md-4 mt-3 card p-2">
+                        <p><strong>Subtotal:</strong> {{ $sell->sellItems->sum(function($item) { return $item->unit_price * $item->quantity; }) }}</p>
+                        @if($sell->discount > 0)
+                        <p><strong>Discount:</strong> {{ $sell->discount }}</p>
+                        <p><strong>Total:</strong> {{ $sell->total_amount }}</p>
+                        @else
                         <p><strong>Total:</strong> {{ $sell->sellItems->sum(function($item) { return $item->unit_price * $item->quantity; }) }}</p>
-                        <p><strong>Total Paid:</strong> {{ $sell->payment->paymentItems->sum('amount') }}</p>
-                        <p><strong>Total Due:</strong> {{ $sell->sellItems->sum(function($item) { return $item->unit_price * $item->quantity; }) - $sell->payment->paymentItems->sum('amount') }}</p>
+                        @endif
+                        <p><strong>Total Paid:</strong> {{ $sell->paid_amount }}</p>
+                        <p><strong>Total Due:</strong> {{ $sell->due_amount }}</p>
                     </div>
                     </div>
                 </div>
