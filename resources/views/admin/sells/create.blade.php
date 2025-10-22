@@ -80,6 +80,15 @@
                             <h6>Subtotal: <span id="subtotal">0.00</span></h6>
                         </div>
 
+                        <div class="mb-3">
+                            <label for="discount" class="form-label">Discount [BDT]</label>
+                            <input type="number" step="0.01" class="form-control" id="discount" name="discount" value="0.00">
+                        </div>
+
+                        <div class="mt-3">
+                            <h6>Total Amount: <span id="totalAmount">0.00</span></h6>
+                        </div>
+
                         <h5 class="mt-4">Payment Items</h5>
                         <div id="paymentItems">
                             <div class="payment-item mb-3 border p-3">
@@ -213,6 +222,11 @@ $(document).ready(function() {
         calculateSubtotal();
     });
 
+    // Recalculate when discount changes
+    $(document).on('input', '#discount', function() {
+        calculateTotalAmount();
+    });
+
     // Calculate subtotal
     function calculateSubtotal() {
         var subtotal = 0;
@@ -220,6 +234,15 @@ $(document).ready(function() {
             subtotal += parseFloat($(this).val()) || 0;
         });
         $('#subtotal').text(subtotal.toFixed(2));
+        calculateTotalAmount();
+    }
+
+    // Calculate total amount after discount
+    function calculateTotalAmount() {
+        var subtotal = parseFloat($('#subtotal').text()) || 0;
+        var discount = parseFloat($('#discount').val()) || 0;
+        var totalAmount = subtotal - discount;
+        $('#totalAmount').text(totalAmount.toFixed(2));
         calculateDueAmount();
     }
 
@@ -238,9 +261,9 @@ $(document).ready(function() {
     }
 
     function calculateDueAmount() {
-        var subtotal = parseFloat($('#subtotal').text()) || 0;
+        var totalAmount = parseFloat($('#totalAmount').text()) || 0;
         var totalPaid = parseFloat($('#totalPaid').text()) || 0;
-        var dueAmount = subtotal - totalPaid;
+        var dueAmount = totalAmount - totalPaid;
         $('#dueAmount').text(dueAmount.toFixed(2));
     }
 });
