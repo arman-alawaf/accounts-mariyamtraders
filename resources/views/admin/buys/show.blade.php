@@ -127,7 +127,7 @@
                         <p><strong>Grand Total:</strong> {{ $buy->total_amount + $buy->buyExpenseItems->sum('amount') }}</p>
                         @endif
                         <p><strong>Total Paid:</strong> {{ $buy->paid_amount }}</p>
-                        <p><strong>Total Due:</strong> {{ $buy->due_amount }}</p>
+                        <p><strong>Total Payable:</strong> {{ $buy->due_amount }}</p>
                     </div>
                     </div>
                 </div>

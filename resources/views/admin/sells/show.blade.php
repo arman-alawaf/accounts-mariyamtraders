@@ -126,8 +126,8 @@
                         <p><strong>Total Expenses:</strong> {{ $sell->sellExpenseItems->sum('amount') }}</p>
                         <p><strong>Grand Total:</strong> {{ $sell->total_amount + $sell->sellExpenseItems->sum('amount') }}</p>
                         @endif
-                        <p><strong>Total Paid:</strong> {{ $sell->paid_amount }}</p>
-                        <p><strong>Total Due:</strong> {{ $sell->due_amount }}</p>
+                        <p><strong>Total Received:</strong> {{ $sell->paid_amount }}</p>
+                        <p><strong>Total Receivable:</strong> {{ $sell->due_amount }}</p>
                     </div>
                     </div>
                 </div>
