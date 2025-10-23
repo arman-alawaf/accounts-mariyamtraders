@@ -36,7 +36,7 @@
 
                         <div class="mb-3">
                             <label for="date" class="form-label">Date</label>
-                            <input type="date" class="form-control" id="date" name="date" value="{{ date('Y-m-d') }}" required>
+                            <input type="date" class="form-control" id="date" name="date" value="{{ date('d-M-Y') }}" required>
                             @error('date') <div class="text-danger">{{ $message }}</div> @enderror
                         </div>
 

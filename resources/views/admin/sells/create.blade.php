@@ -30,6 +30,12 @@
                             @error('customer_type_id') <div class="text-danger">{{ $message }}</div> @enderror
                         </div>
 
+                        <div class="mb-3">
+                            <label for="date" class="form-label">Date</label>
+                            <input type="date" class="form-control" id="date" name="date" value="{{ date('d-M-Y') }}" required>
+                            @error('date') <div class="text-danger">{{ $message }}</div> @enderror
+                        </div>
+
                         <h5>Sell Items</h5>
                         <div id="sellItems">
                             <div class="sell-item mb-3 border p-3">
