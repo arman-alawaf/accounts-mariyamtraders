@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class PaymentItem extends Model
 {
-    protected $fillable = ['payment_id', 'paytype_id', 'amount'];
+    protected $fillable = ['payment_id', 'paytype_id', 'amount', 'date'];
 
     public function payment()
     {

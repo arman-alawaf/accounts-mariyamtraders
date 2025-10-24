@@ -24,7 +24,7 @@ class BuyController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $query = Buy::with('supplier')->select(['id', 'supplier_id', 'date', 'created_at'])->orderBy('id', 'desc');
+            $query = Buy::with('supplier')->select(['id', 'supplier_id', 'date', 'created_at', 'due_amount'])->orderBy('id', 'desc');
 
             if ($request->has('date') && !empty($request->date)) {
                 $query->whereDate('date', $request->date);
@@ -42,12 +42,20 @@ class BuyController extends Controller
                     return $buy->created_at->setTimezone('Asia/Dhaka')->format('g:i A, j F Y');
                 })
                 ->addColumn('action', function ($buy) {
-                    return '<a href="' . route('buys.show', $buy->id) . '" class="btn btn-info btn-sm">View</a>
-                            <form action="' . route('buys.destroy', $buy->id) . '" method="POST" style="display:inline;">
-                                ' . csrf_field() . '
-                                ' . method_field('DELETE') . '
-                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm(\'Are you sure?\')">Delete</button>
-                            </form>';
+                    $actions = '<a href="' . route('buys.show', $buy->id) . '" class="btn btn-info btn-sm">View</a>';
+
+                    if ($buy->due_amount > 0) {
+                        $actions .= ' <a href="' . route('buys.add_installment', $buy->id) . '" class="btn btn-warning btn-sm">Add Instalment</a>';
+                    }
+
+                    $actions .= '
+                        <form action="' . route('buys.destroy', $buy->id) . '" method="POST" style="display:inline;">
+                            ' . csrf_field() . '
+                            ' . method_field('DELETE') . '
+                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm(\'Are you sure?\')">Delete</button>
+                        </form>';
+
+                    return $actions;
                 })
                 ->rawColumns(['action'])
                 ->make(true);
@@ -192,5 +200,58 @@ class BuyController extends Controller
         $buy->delete(); // Cascade will handle
 
         return redirect()->route('buys.index')->with('success', 'Buy deleted successfully.');
+    }
+
+    /**
+     * Show the form for adding an installment payment.
+     */
+    public function addInstallment(Buy $buy)
+    {
+        if ($buy->due_amount <= 0) {
+            return redirect()->route('buys.index')->with('error', 'No due amount for this buy.');
+        }
+
+        $payTypes = PayType::all();
+        return view('admin.buys.add_installment', compact('buy', 'payTypes'));
+    }
+
+    /**
+     * Store the installment payment.
+     */
+    public function storeInstallment(Request $request, Buy $buy)
+    {
+        $request->validate([
+            'payment_items' => 'required|array|min:1',
+            'payment_items.*.paytype_id' => 'required|exists:pay_types,id',
+            'payment_items.*.amount' => 'required|numeric|min:0',
+            'payment_items.*.date' => 'required|date',
+        ]);
+
+        DB::transaction(function () use ($request, $buy) {
+            $totalInstallmentAmount = 0;
+            foreach ($request->payment_items as $item) {
+                $totalInstallmentAmount += $item['amount'];
+            }
+
+            if ($totalInstallmentAmount > $buy->due_amount) {
+                throw new \Exception('Installment amount cannot exceed due amount.');
+            }
+
+            foreach ($request->payment_items as $item) {
+                PaymentItem::create([
+                    'payment_id' => $buy->payment_id,
+                    'paytype_id' => $item['paytype_id'],
+                    'amount' => $item['amount'],
+                    'date' => $item['date'],
+                ]);
+            }
+
+            $buy->update([
+                'paid_amount' => $buy->paid_amount + $totalInstallmentAmount,
+                'due_amount' => $buy->due_amount - $totalInstallmentAmount,
+            ]);
+        });
+
+        return redirect()->route('buys.index')->with('success', 'Installment payment added successfully.');
     }
 }

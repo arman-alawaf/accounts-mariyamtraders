@@ -94,6 +94,8 @@ Route::middleware(['auth', 'admin'])->group(function () {
         'update' => 'buys.update',
         'destroy' => 'buys.destroy',
     ]);
+    Route::get('buys/{buy}/add-installment', [App\Http\Controllers\BuyController::class, 'addInstallment'])->name('buys.add_installment');
+    Route::post('buys/{buy}/add-installment', [App\Http\Controllers\BuyController::class, 'storeInstallment'])->name('buys.store_installment');
     Route::get('reports', [App\Http\Controllers\ReportController::class, 'index'])->name('reports.index');
     Route::resource('expense_names', App\Http\Controllers\ExpenseNameController::class)->names([
         'index' => 'expense_names.index',
