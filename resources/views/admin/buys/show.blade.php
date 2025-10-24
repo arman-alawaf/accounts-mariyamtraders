@@ -69,6 +69,7 @@
                             <tr>
                                 <th>Pay Type</th>
                                 <th>Amount [BDT]</th>
+                                <th>Date</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -76,6 +77,7 @@
                                 <tr>
                                     <td>{{ $item->paytype->name }}</td>
                                     <td>{{ $item->amount }}</td>
+                                    <td>{{ $item->date ? \Carbon\Carbon::parse($item->date)->format('d M Y') : 'N/A' }}</td>
                                 </tr>
                             @endforeach
                         </tbody>

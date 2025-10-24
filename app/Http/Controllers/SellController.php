@@ -24,7 +24,7 @@ class SellController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $sells = Sell::with('customer')->select(['id', 'customer_id', 'created_at'])->orderBy('id', 'desc');
+            $sells = Sell::with('customer')->select(['id', 'customer_id', 'created_at', 'due_amount'])->orderBy('id', 'desc');
 
             return DataTables::of($sells)
                 ->addIndexColumn()
@@ -35,12 +35,20 @@ class SellController extends Controller
                     return $sell->created_at->setTimezone('Asia/Dhaka')->format('g:i A, j F Y');
                 })
                 ->addColumn('action', function ($sell) {
-                    return '<a href="' . route('sells.show', $sell->id) . '" class="btn btn-info btn-sm">View</a>
-                            <form action="' . route('sells.destroy', $sell->id) . '" method="POST" style="display:inline;">
-                                ' . csrf_field() . '
-                                ' . method_field('DELETE') . '
-                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm(\'Are you sure?\')">Delete</button>
-                            </form>';
+                    $actions = '<a href="' . route('sells.show', $sell->id) . '" class="btn btn-info btn-sm">View</a>';
+
+                    if ($sell->due_amount > 0) {
+                        $actions .= ' <a href="' . route('sells.add_installment', $sell->id) . '" class="btn btn-warning btn-sm">Add Instalment</a>';
+                    }
+
+                    $actions .= '
+                        <form action="' . route('sells.destroy', $sell->id) . '" method="POST" style="display:inline;">
+                            ' . csrf_field() . '
+                            ' . method_field('DELETE') . '
+                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm(\'Are you sure?\')">Delete</button>
+                        </form>';
+
+                    return $actions;
                 })
                 ->rawColumns(['action'])
                 ->make(true);
@@ -183,5 +191,58 @@ class SellController extends Controller
         $sell->delete(); // Cascade will handle
 
         return redirect()->route('sells.index')->with('success', 'Sell deleted successfully.');
+    }
+
+    /**
+     * Show the form for adding an installment payment.
+     */
+    public function addInstallment(Sell $sell)
+    {
+        if ($sell->due_amount <= 0) {
+            return redirect()->route('sells.index')->with('error', 'No due amount for this sell.');
+        }
+
+        $payTypes = PayType::all();
+        return view('admin.sells.add_installment', compact('sell', 'payTypes'));
+    }
+
+    /**
+     * Store the installment payment.
+     */
+    public function storeInstallment(Request $request, Sell $sell)
+    {
+        $request->validate([
+            'payment_items' => 'required|array|min:1',
+            'payment_items.*.paytype_id' => 'required|exists:pay_types,id',
+            'payment_items.*.amount' => 'required|numeric|min:0',
+            'payment_items.*.date' => 'required|date',
+        ]);
+
+        DB::transaction(function () use ($request, $sell) {
+            $totalInstallmentAmount = 0;
+            foreach ($request->payment_items as $item) {
+                $totalInstallmentAmount += $item['amount'];
+            }
+
+            if ($totalInstallmentAmount > $sell->due_amount) {
+                throw new \Exception('Installment amount cannot exceed due amount.');
+            }
+
+            foreach ($request->payment_items as $item) {
+                PaymentItem::create([
+                    'payment_id' => $sell->payment_id,
+                    'paytype_id' => $item['paytype_id'],
+                    'amount' => $item['amount'],
+                    'date' => $item['date'],
+                ]);
+            }
+
+            $sell->update([
+                'paid_amount' => $sell->paid_amount + $totalInstallmentAmount,
+                'due_amount' => $sell->due_amount - $totalInstallmentAmount,
+            ]);
+        });
+
+        return redirect()->route('sells.index')->with('success', 'Installment payment added successfully.');
     }
 }
