@@ -117,19 +117,19 @@
 
                     <div class="row justify-content-center">
                     <div class="col-md-4 mt-3 card p-2">
-                        <p><strong>Subtotal:</strong> {{ $buy->buyItems->sum(function($item) { return $item->unit_price * $item->quantity; }) }}</p>
+                        <p><strong>Subtotal [BDT]:</strong> {{ $buy->buyItems->sum(function($item) { return $item->unit_price * $item->quantity; }) }}</p>
                         @if($buy->discount > 0)
-                        <p><strong>Discount:</strong> {{ $buy->discount }}</p>
-                        <p><strong>Total:</strong> {{ $buy->total_amount }}</p>
+                        <p><strong>Discount [BDT]:</strong> {{ $buy->discount }}</p>
+                        <p><strong>Total [BDT]:</strong> {{ $buy->total_amount }}</p>
                         @else
-                        <p><strong>Total:</strong> {{ $buy->buyItems->sum(function($item) { return $item->unit_price * $item->quantity; }) }}</p>
+                        <p><strong>Total [BDT]:</strong> {{ $buy->buyItems->sum(function($item) { return $item->unit_price * $item->quantity; }) }}</p>
                         @endif
                         @if($buy->buyExpenseItems->count() > 0)
-                        <p><strong>Total Expenses:</strong> {{ $buy->buyExpenseItems->sum('amount') }}</p>
-                        <p><strong>Grand Total:</strong> {{ $buy->total_amount + $buy->buyExpenseItems->sum('amount') }}</p>
+                        <p><strong>Total Expenses [BDT]:</strong> {{ $buy->buyExpenseItems->sum('amount') }}</p>
+                        <p><strong>Grand Total [BDT]:</strong> {{ $buy->total_amount + $buy->buyExpenseItems->sum('amount') }}</p>
                         @endif
-                        <p><strong>Total Paid:</strong> {{ $buy->paid_amount }}</p>
-                        <p><strong>Total Payable:</strong> {{ $buy->due_amount }}</p>
+                        <p><strong>Total Paid [BDT]:</strong> {{ $buy->paid_amount }}</p>
+                        <p><strong>Total Payable [BDT]:</strong> {{ $buy->due_amount }}</p>
                     </div>
                     </div>
                 </div>

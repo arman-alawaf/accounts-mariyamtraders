@@ -117,19 +117,19 @@
 
                     <div class="row justify-content-center">
                     <div class="col-md-4 mt-3 card p-2">
-                        <p><strong>Subtotal:</strong> {{ $sell->sellItems->sum(function($item) { return $item->unit_price * $item->quantity; }) }}</p>
+                        <p><strong>Subtotal [BDT]:</strong> {{ $sell->sellItems->sum(function($item) { return $item->unit_price * $item->quantity; }) }}</p>
                         @if($sell->discount > 0)
-                        <p><strong>Discount:</strong> {{ $sell->discount }}</p>
-                        <p><strong>Total:</strong> {{ $sell->total_amount }}</p>
+                        <p><strong>Discount [BDT]:</strong> {{ $sell->discount }}</p>
+                        <p><strong>Total [BDT]:</strong> {{ $sell->total_amount }}</p>
                         @else
-                        <p><strong>Total:</strong> {{ $sell->sellItems->sum(function($item) { return $item->unit_price * $item->quantity; }) }}</p>
+                        <p><strong>Total [BDT]:</strong> {{ $sell->sellItems->sum(function($item) { return $item->unit_price * $item->quantity; }) }}</p>
                         @endif
                         @if($sell->sellExpenseItems->count() > 0)
-                        <p><strong>Total Expenses:</strong> {{ $sell->sellExpenseItems->sum('amount') }}</p>
-                        <p><strong>Grand Total:</strong> {{ $sell->total_amount + $sell->sellExpenseItems->sum('amount') }}</p>
+                        <p><strong>Total Expenses [BDT]:</strong> {{ $sell->sellExpenseItems->sum('amount') }}</p>
+                        <p><strong>Grand Total [BDT]:</strong> {{ $sell->total_amount + $sell->sellExpenseItems->sum('amount') }}</p>
                         @endif
-                        <p><strong>Total Received:</strong> {{ $sell->paid_amount }}</p>
-                        <p><strong>Total Receivable:</strong> {{ $sell->due_amount }}</p>
+                        <p><strong>Total Received [BDT]:</strong> {{ $sell->paid_amount }}</p>
+                        <p><strong>Total Receivable [BDT]:</strong> {{ $sell->due_amount }}</p>
                     </div>
                     </div>
                 </div>
